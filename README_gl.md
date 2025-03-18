@@ -39,7 +39,7 @@ find "${BABYLM_DATA_PATH}/babylm_dev" -type f -name "*.dev" | xargs python3 data
 find "${BABYLM_DATA_PATH}/babylm_test" -type f -name "*.test" | xargs python3 data/tag.py
 ```
 
-*Note: This requires GPU and takes several minutes. I recommend creating a Slurm job to run it.*
+*Note: This requires GPU and takes several minutes. I recommend creating a Slurm job to run it. Also, some files will fail due to there being texts longer than the tagging model's sequence length.*
 
 5. To be continued... (currently waiting for data to tag)
 
