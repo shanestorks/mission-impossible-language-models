@@ -21,7 +21,27 @@ source activate milm
 pip install -r requirements.txt
 ```
 
-3. (To be continued; waiting for BabyLM data to get tagged)
+3. Download BabyLM data:
+```
+cd data
+wget https://github.com/babylm/babylm.github.io/raw/main/babylm_data.zip
+unzip babylm_data.zip
+```
+
+*Note: you can also just use Shane's downloaded and tagged data at `/nfs/turbo/coe-sstorks/sstorks/mission-impossible-language-models/data/babylm_data`, enabling you to skip Steps 3-4.*
+
+4. Tag the BabyLM data.
+```
+export BABYLM_DATA_PATH="full/path/to/babylm_data"
+find "${BABYLM_DATA_PATH}/babylm_10M" -type f -name "*.train" | xargs python3 data/tag.py
+find "${BABYLM_DATA_PATH}/babylm_100M" -type f -name "*.train" | xargs python3 data/tag.py
+find "${BABYLM_DATA_PATH}/babylm_dev" -type f -name "*.dev" | xargs python3 data/tag.py
+find "${BABYLM_DATA_PATH}/babylm_test" -type f -name "*.test" | xargs python3 data/tag.py
+```
+
+*Note: This requires GPU and takes several minutes. I recommend creating a Slurm job to run it.*
+
+5. To be continued... (currently waiting for data to tag)
 
 ## Later Runs
 
