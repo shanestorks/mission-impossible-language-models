@@ -88,65 +88,71 @@ if __name__ == "__main__":
     # Iterate over BabyLM files
     for file in args.path:
 
-        print(file.name)
-        lines = file.readlines()
+        try:
+            print(file.name)
+            lines = file.readlines()
 
-        # Strip lines and join text
-        print("Concatenating lines...")
-        lines = [l.strip() for l in lines]
-        line_batches = [lines[i:i + BATCH_SIZE]
-                        for i in range(0, len(lines), BATCH_SIZE)]
-        text_batches = [" ".join(l) for l in line_batches]
+            # Strip lines and join text
+            print("Concatenating lines...")
+            lines = [l.strip() for l in lines]
+            line_batches = [lines[i:i + BATCH_SIZE]
+                            for i in range(0, len(lines), BATCH_SIZE)]
+            text_batches = [" ".join(l) for l in line_batches]
 
-        # Iterate over lines in file and track annotations
-        line_annotations = []
-        print("Segmenting and parsing text batches...")
-        for text in tqdm.tqdm(text_batches):
-            # Tokenize text with stanza
-            doc = nlp1(text)
+            # Iterate over lines in file and track annotations
+            line_annotations = []
+            print("Segmenting and parsing text batches...")
+            for text in tqdm.tqdm(text_batches):
+                # Tokenize text with stanza
+                doc = nlp1(text)
 
-            # Iterate over sents in the line and track annotations
-            sent_annotations = []
-            for sent in doc.sentences:
+                # Iterate over sents in the line and track annotations
+                sent_annotations = []
+                for sent in doc.sentences:
 
-                # Iterate over words in sent and track annotations
-                word_annotations = []
-                for token, word in zip(sent.tokens, sent.words):
-                    wa = {
-                        'id': word.id,
-                        'text': word.text,
-                        'lemma': word.lemma,
-                        'upos': word.upos,
-                        'xpos': word.xpos,
-                        'feats': word.feats,
-                        'start_char': token.start_char,
-                        'end_char': token.end_char
-                    }
-                    word_annotations.append(wa)  # Track word annotation
+                    # Iterate over words in sent and track annotations
+                    word_annotations = []
+                    for token, word in zip(sent.tokens, sent.words):
+                        wa = {
+                            'id': word.id,
+                            'text': word.text,
+                            'lemma': word.lemma,
+                            'upos': word.upos,
+                            'xpos': word.xpos,
+                            'feats': word.feats,
+                            'start_char': token.start_char,
+                            'end_char': token.end_char
+                        }
+                        word_annotations.append(wa)  # Track word annotation
 
-                # Get constituency parse if needed
-                if args.parse:
-                    constituency_parse = __get_constituency_parse(sent, nlp2)
-                    sa = {
-                        'sent_text': sent.text,
-                        'constituency_parse': constituency_parse,
-                        'word_annotations': word_annotations,
-                    }
-                else:
-                    sa = {
-                        'sent_text': sent.text,
-                        'word_annotations': word_annotations,
-                    }
-                sent_annotations.append(sa)  # Track sent annotation
+                    # Get constituency parse if needed
+                    if args.parse:
+                        constituency_parse = __get_constituency_parse(sent, nlp2)
+                        sa = {
+                            'sent_text': sent.text,
+                            'constituency_parse': constituency_parse,
+                            'word_annotations': word_annotations,
+                        }
+                    else:
+                        sa = {
+                            'sent_text': sent.text,
+                            'word_annotations': word_annotations,
+                        }
+                    sent_annotations.append(sa)  # Track sent annotation
 
-            la = {
-                'sent_annotations': sent_annotations
-            }
-            line_annotations.append(la)  # Track line annotation
+                la = {
+                    'sent_annotations': sent_annotations
+                }
+                line_annotations.append(la)  # Track line annotation
 
-        # Write annotations to file as a JSON
-        print("Writing JSON outfile...")
-        ext = '_parsed.json' if args.parse else '.json'
-        json_filename = os.path.splitext(file.name)[0] + ext
-        with open(json_filename, "w") as outfile:
-            json.dump(line_annotations, outfile, indent=4)
+            # Write annotations to file as a JSON
+            print("Writing JSON outfile...")
+            ext = '_parsed.json' if args.parse else '.json'
+            json_filename = os.path.splitext(file.name)[0] + ext
+            with open(json_filename, "w") as outfile:
+                json.dump(line_annotations, outfile, indent=4)
+
+        except Exception as e:
+            print(f"Encountered exception in processing {file}:")
+            print(e)
+            continue
