@@ -89,6 +89,14 @@ if __name__ == "__main__":
     for file in args.path:
 
         try:
+
+            # Write annotations to file as a JSON
+            ext = '_parsed.json' if args.parse else '.json'
+            json_filename = os.path.splitext(file.name)[0] + ext
+            if os.path.exists(json_filename):
+                print(f"File {file} was already processed. Skipping.")
+                continue
+
             print(file.name)
             lines = file.readlines()
 
@@ -145,10 +153,7 @@ if __name__ == "__main__":
                 }
                 line_annotations.append(la)  # Track line annotation
 
-            # Write annotations to file as a JSON
             print("Writing JSON outfile...")
-            ext = '_parsed.json' if args.parse else '.json'
-            json_filename = os.path.splitext(file.name)[0] + ext
             with open(json_filename, "w") as outfile:
                 json.dump(line_annotations, outfile, indent=4)
 
