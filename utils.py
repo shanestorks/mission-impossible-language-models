@@ -32,7 +32,7 @@ GENRES = {
 }
 CHECKPOINT_WRITE_PATH = "/nlp/scr3/nlp/llms-in-llms/babylm_models"
 CHECKPOINT_READ_PATH = "/nlp/scr3/nlp/llms-in-llms/babylm_models"
-BABYLM_DATA_PATH = "/nfs/turbo/coe-sstorks/sstorks/mission-impossible-language-models/data/babylm_data"
+BABYLM_DATA_PATH = "/nfs/turbo/coe-sstorks/sstorks/mission-impossible-language-models/data"
 MARKER_HOP_SING = "🅂"
 MARKER_HOP_PLUR = "🄿"
 MARKER_REV = "🅁"
